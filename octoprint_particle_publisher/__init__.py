@@ -56,7 +56,7 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 
 			return True
 		except:
-			self._logger.exception("Error while instantiating ParticlePublisher")
+			self._logger.exception("Error while instantiating Particle Publisher")
 			return False
 
 
@@ -69,18 +69,15 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 		self._connect_publisher()
 
 		if self._ok:
-			callback = ParticlePublisherCallback(self._access_token, self._pubsub_event, self._api_url)
-			self._printer.register_callback(callback)
+			self._callback = ParticlePublisherCallback(self._access_token, self._pubsub_event, self._api_url)
+			self._printer.register_callback(self._callback)
 
 
 	#~~ SettingsPlugin
 	def on_settings_save(self, data):
 		octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
-
-		import threading
-		thread = threading.Thread(target=self._connect_publisher)
-		thread.daemon = True
-		thread.start()
+		self._printer.unregister_callback(self._callback)
+		self.on_after_startup()
 
 
 	def get_settings_defaults(self):
@@ -96,12 +93,6 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 		return [
 			dict(type="settings", name="Particle Publisher", custom_bindings=False)
 		]
-
-
-	def on_print_progress(self, path, progress):
-		#if self._ok:
-		print ">>> "+path+" "+progress
-		self._publish("progress|"+str(payload))
 
 
 	#~~ EventHandlerPlugin
