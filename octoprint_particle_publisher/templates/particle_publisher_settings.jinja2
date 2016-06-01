@@ -1,0 +1,26 @@
+<h3>{{ _('Particle Publisher Configuration') }}</h3>
+
+{% trans %}<p>
+    In order to use the Particle Publisher plugin, you need to configure your Particle cloud API
+    Access Token below. You can find that in
+    <a href="https://build.particle.io/" target="_blank">your Particle Build IDE account settings</a>.
+</p>{% endtrans %}
+
+<form class="form-horizontal">
+    <div class="control-group">
+        <label class="control-label">{{ _('Access Token') }}</label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.access_token">
+        </div>
+
+        <label class="control-label">{{ _('PubSub Event') }}</label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.pubsub_event" placeholder="3dprinter">
+        </div>
+
+        <label class="control-label">{{ _('API URL') }}</label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.api_url" placeholder="https://api.particle.io/v1">
+        </div>
+    </div>
+</form>
