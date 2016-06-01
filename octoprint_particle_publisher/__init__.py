@@ -15,17 +15,17 @@ import octoprint.printer
 
 
 class ParticlePublisherCallback(octoprint.printer.PrinterCallback):
-	def __init__(self, access_token, pubsub_event, api_url):
+	def __init__(self, access_token, pubsub_event, api_url, temperature_format):
 		self._access_token = access_token
 		self._pubsub_event = pubsub_event
 		self._api_url = api_url
+		self._temperature_format = temperature_format
 
 	##-- Printer temperature
 	def on_printer_add_temperature(self, data):
-		self._publish("Temperature|"+str(data))
+		self._publish(self._temperature_format.format(**data))
 
 	def _publish(self, data):
-		data = str(data)
 		data = data.replace(": ", ":")
 		data = data.replace(", ", ",")
 
@@ -46,6 +46,7 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 		self._access_token = None
 		self._pubsub_event = "3dprinter"
 		self._api_url = "https://api.particle.io/v1"
+		self._temperature_format = "Temperature|{tool0[actual]}|{tool0[target]}|{bed[actual]}|{bed[target]}"
 
 	def _connect_publisher(self):
 		try:
@@ -66,10 +67,11 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 		self._access_token = self._settings.get(["access_token"])
 		self._pubsub_event = self._settings.get(["pubsub_event"])
 		self._api_url = self._settings.get(["api_url"])
+		self._temperature_format = self._settings.get(["temperature_format"])
 		self._connect_publisher()
 
 		if self._ok:
-			self._callback = ParticlePublisherCallback(self._access_token, self._pubsub_event, self._api_url)
+			self._callback = ParticlePublisherCallback(self._access_token, self._pubsub_event, self._api_url, self._temperature_format)
 			self._printer.register_callback(self._callback)
 
 
@@ -84,7 +86,8 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 		return dict(
 			access_token = None,
 			pubsub_event = "3dprinter",
-			api_url = "https://api.particle.io/v1"
+			api_url = "https://api.particle.io/v1",
+			temperature_format = "Temperature|{tool0[actual]}|{tool0[target]}|{bed[actual]}|{bed[target]}"
 		)
 
 
@@ -97,6 +100,8 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 
 	#~~ EventHandlerPlugin
 	def on_event(self, event, payload):
+		return True
+
 		if event == Events.Z_CHANGE:
 			return
 		if event == Events.HOME:
