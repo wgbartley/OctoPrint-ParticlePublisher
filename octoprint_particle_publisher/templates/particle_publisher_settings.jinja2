@@ -27,5 +27,10 @@
         <div class="controls">
             <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.temperature_format" placeholder="Temperature|{tool0[actual]}|{tool0[target]}|{bed[actual]}|{bed[target]}">
         </div>
+
+        <label class="control-label">{{ _('Progress String Format') }}</label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.progress_format" placeholder="Progress|{storage}|{path}|{progress}">
+        </div>
     </div>
 </form>

@@ -36,9 +36,11 @@ class ParticlePublisherCallback(octoprint.printer.PrinterCallback):
 
 
 class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
-                       octoprint.plugin.SettingsPlugin,
-                       octoprint.plugin.StartupPlugin,
-                       octoprint.plugin.TemplatePlugin):
+			octoprint.plugin.SettingsPlugin,
+			octoprint.plugin.StartupPlugin,
+			octoprint.plugin.TemplatePlugin,
+			octoprint.plugin.ProgressPlugin
+			):
 
 
 	def __init__(self):
@@ -47,6 +49,7 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 		self._pubsub_event = "3dprinter"
 		self._api_url = "https://api.particle.io/v1"
 		self._temperature_format = "Temperature|{tool0[actual]}|{tool0[target]}|{bed[actual]}|{bed[target]}"
+		self._progress_format = "Progress|{storage}|{path}|{progress}"
 
 	def _connect_publisher(self):
 		try:
@@ -68,6 +71,7 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 		self._pubsub_event = self._settings.get(["pubsub_event"])
 		self._api_url = self._settings.get(["api_url"])
 		self._temperature_format = self._settings.get(["temperature_format"])
+		self._progress_format = self._settings.get(["progress_format"])
 		self._connect_publisher()
 
 		if self._ok:
@@ -87,7 +91,8 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 			access_token = None,
 			pubsub_event = "3dprinter",
 			api_url = "https://api.particle.io/v1",
-			temperature_format = "Temperature|{tool0[actual]}|{tool0[target]}|{bed[actual]}|{bed[target]}"
+			temperature_format = "Temperature|{tool0[actual]}|{tool0[target]}|{bed[actual]}|{bed[target]}",
+			progress_format = "Progress|{storage}|{path}|{progress}"
 		)
 
 
@@ -109,6 +114,16 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 
 		if self._ok:
 			self._publish(event+"|"+str(payload))
+
+
+	def on_print_progress(self, storage, path, progress):
+		data = dict(
+			storage = storage,
+			path = path,
+			progress = progress
+		)
+
+		self._publish(self._progress_format.format(**data))
 
 
 	##~~ Softwareupdate hook
