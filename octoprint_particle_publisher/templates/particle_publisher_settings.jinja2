@@ -6,8 +6,36 @@
     <a href="https://build.particle.io/" target="_blank">your Particle Build IDE account settings</a>.
 </p>{% endtrans %}
 
-<form class="form-horizontal">
+<style type="text/css">
+.particle_publisher .control-label {
+	clear: both;
+}
+
+.particle_publisher input[type="checkbox"] {
+	float: right;
+	vertical-align: middle;
+	margin-left: 1em;
+}
+
+.particle_publisher h5 {
+	clear: left;
+}
+</style>
+
+<script type="text/javascript">
+window.setTimeout(function() {
+	document.querySelector('#navbar_show_settings').click();
+
+	window.setTimeout(function() {
+		document.querySelector('#settings_plugin_particle_publisher_link a').click();
+	}, 500);
+}, 1000);
+</script>
+
+<form class="form-horizontal particle_publisher">
     <div class="control-group">
+        <h5>General Settings</h5>
+
         <label class="control-label">{{ _('Access Token') }}</label>
         <div class="controls">
             <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.access_token">
@@ -23,7 +51,11 @@
             <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.api_url" placeholder="https://api.particle.io/v1">
         </div>
 
-        <label class="control-label">{{ _('Temperature String Format') }}</label>
+
+	<br>
+        <h5>Interval Messages</h5>
+
+        <label class="control-label">{{ _('Temp. String Format') }}</label>
         <div class="controls">
             <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.temperature_format" placeholder="Temperature|{tool0[actual]}|{tool0[target]}|{bed[actual]}|{bed[target]}">
         </div>
@@ -32,5 +64,422 @@
         <div class="controls">
             <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.progress_format" placeholder="Progress|{storage}|{path}|{progress}">
         </div>
+
+
+	<br>
+	<h4>Events</h4>
+
+        <p>
+            A full listing of events can be found in the <a href="https://github.com/foosel/OctoPrint/blob/master/src/octoprint/events.py#L27-L91" target="_blank">OctoPrint source code</a>
+            or in the <a href="http://docs.octoprint.org/en/master/events/index.html#available-events" target="_blank">documentation</a>.
+        </p>
+
+
+        <h5>Server</h5>
+
+        <label class="control-label">
+            {{ _('StartUp') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_startup_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_startup_format" placeholder="StartUp">
+        </div>
+
+        <label class="control-label">
+            {{ _('ClientOpened') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_clientopened_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_clientopened_format" placeholder="ClientOpened|{remoteAddress}">
+        </div>
+
+        <label class="control-label">
+            {{ _('ClientClosed') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_clientclosed_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_clientclosed_format" placeholder="ClientClosed|{remoteAddress}">
+        </div>
+
+
+	<br>
+        <h5>Printer Communication</h5>
+
+        <label class="control-label">
+            {{ _('Connected') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_connected_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_connected_format" placeholder="Connected|{port}|{baudrate}">
+        </div>
+
+        <label class="control-label">
+            {{ _('Disconnected') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_disconnected_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_disconnected_format" placeholder="Disconnected|">
+        </div>
+
+        <label class="control-label">
+            {{ _('Error') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_error_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_error_format" placeholder="Error|{error}">
+        </div>
+
+
+	<br>
+	<h5>File Handling</h5>
+
+        <label class="control-label">
+            {{ _('Upload') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_upload_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_upload_format" placeholder="Upload|{file}|{target}">
+        </div>
+
+        <label class="control-label">
+            {{ _('UpdatedFiles') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_updatedfiles_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_updatedfiles_format" placeholder="UpdatedFiles|{type}">
+        </div>
+
+        <label class="control-label">
+            {{ _('MetadataAnalysisStarted') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_metadataanalysisstarted_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_metadataanalysisstarted_format" placeholder="MetadataAnalysisStarted|{file}">
+        </div>
+
+        <label class="control-label">
+            {{ _('MetadataAnalysisFinished') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_metadataanalysisfinished_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_metadataanalysisfinished_format" placeholder="MetadataAnalysisFinished|{file}">
+        </div>
+
+	<!--
+        <label class="control-label">
+            {{ _('MetadataStatisticsUpdated') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_metadatastatisticsupdated_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_metadatastatisticsupdated_format" placeholder="">
+        </div>
+	-->
+
+        <label class="control-label">
+            {{ _('FileSelected') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_fileselected_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_fileselected_format" placeholder="FileSelected|{file}|{filename}|{origin}">
+        </div>
+
+        <label class="control-label">
+            {{ _('FileDeselected') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_filedeselected_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_filedeselected_format" placeholder="FileDeselected|">
+        </div>
+
+        <label class="control-label">
+            {{ _('TransferStarted') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_transferstarted_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_transferstarted_format" placeholder="TransferStarted|{local}|{remote}">
+        </div>
+
+        <label class="control-label">
+            {{ _('TransferDone') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_transferdone_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_transferdone_format" placeholder="TransferDone|{time}|{local}|{remote}">
+        </div>
+
+
+	<br>
+	<h5>Printing</h5>
+
+        <label class="control-label">
+            {{ _('PrintStarted') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_printstarted_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_printstarted_format" placeholder="PrintStarted|{file}|{origin}">
+        </div>
+
+        <label class="control-label">
+            {{ _('PrintFailed') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_printfailed_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_printfailed_format" placeholder="PrintFailed|{file}|{origin}">
+        </div>
+
+        <label class="control-label">
+            {{ _('PrintDone') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_printdone_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_printdone_format" placeholder="PrintDone|{file}|{origin}|{time}">
+        </div>
+
+        <label class="control-label">
+            {{ _('PrintCancelled') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_printcancelled_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_printcancelled_format" placeholder="PrintCancelled|{file}|{origin}">
+        </div>
+
+        <label class="control-label">
+            {{ _('PrintPaused') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_printpaused_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_printpaused_format" placeholder="PrintPaused|{file}|{origin}">
+        </div>
+
+        <label class="control-label">
+            {{ _('PrintResumed') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_printresumed_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_printresumed_format" placeholder="PrintResumed|{file}|{origin}">
+        </div>
+
+
+	<br>
+	<h5>GCODE Processing</h5>
+
+        <label class="control-label">
+            {{ _('PowerOn') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_poweron_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_poweron_format" placeholder="PowerOn|">
+        </div>
+
+        <label class="control-label">
+            {{ _('PowerOff') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_poweroff_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_poweroff_format" placeholder="PowerOff|">
+        </div>
+
+        <label class="control-label">
+            {{ _('Home') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_home_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_home_format" placeholder="Home|">
+        </div>
+
+        <label class="control-label">
+            {{ _('ZChange') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_zchange_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_zchange_format" placeholder="ZChange|">
+        </div>
+
+        <label class="control-label">
+            {{ _('Paused') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_dwell_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_dwell_format" placeholder="Paused|">
+        </div>
+
+        <label class="control-label">
+            {{ _('Waiting') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_waiting_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_waiting_format" placeholder="Waiting|">
+        </div>
+
+        <label class="control-label">
+            {{ _('Cooling') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_cooling_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_cooling_format" placeholder="Cooling|">
+        </div>
+
+        <label class="control-label">
+            {{ _('Alert') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_alert_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_alert_format" placeholder="Alert|">
+        </div>
+
+        <label class="control-label">
+            {{ _('Conveyor') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_conveyor_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_conveyor_format" placeholder="Conveyor|">
+        </div>
+
+        <label class="control-label">
+            {{ _('Eject') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_eject_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_eject_format" placeholder="Eject|">
+        </div>
+
+        <label class="control-label">
+            {{ _('EStop') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_estop_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_estop_format" placeholder="EStop|">
+        </div>
+
+	<!--
+        <label class="control-label">
+            {{ _('RegisteredMessageReceived') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_registeredmessagereceived_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_registeredmessagereceived_format" placeholder="">
+        </div>
+	-->
+
+
+	<br>
+	<h5>Timelapses</h5>
+
+        <label class="control-label">
+            {{ _('CaptureStart') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_capturestart_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_capturestart_format" placeholder="CaptureStart|{file}">
+        </div>
+
+        <label class="control-label">
+            {{ _('CaptureDone') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_capturedone_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_capturedone_format" placeholder="CaptureDone|{file}">
+        </div>
+
+	<!--
+        <label class="control-label">
+            {{ _('CaptureFailed') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_capturefailed_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_capturefailed_format" placeholder="">
+        </div>
+	-->
+
+	<!--
+        <label class="control-label">
+            {{ _('PostRollStart') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_postrollstart_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_postrollstart_format" placeholder="">
+        </div>
+
+        <label class="control-label">
+            {{ _('PostRollEnd') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_postrollend_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_postrollend_format" placeholder="">
+        </div>
+	-->
+
+        <label class="control-label">
+            {{ _('MovieRendering') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_movierendering_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_movierendering_format" placeholder="MovieRendering|{gcode}|{movie}|{movie_basename}">
+        </div>
+
+        <label class="control-label">
+            {{ _('MovieDone') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_moviedone_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_moviedone_format" placeholder="MovieDone|{gcode}|{movie}|{movie_basename}">
+        </div>
+
+        <label class="control-label">
+            {{ _('MovieFailed') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_moviefailed_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_moviefailed_format" placeholder="MovieFailed|{gcode}|{movie}|{movie_basename}|{returncode}">
+        </div>
+
+
+	<br>
+	<h5>Slicing</h5>
+
+        <label class="control-label">
+            {{ _('SlicingStarted') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_slicingstarted_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_slicingstarted_format" placeholder="SlicingStarted|{stl}|{gcode}|{time}">
+        </div>
+
+        <label class="control-label">
+            {{ _('SlicingDone') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_slicingdone_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_slicingdone_format" placeholder="SlicingDone|{stl}|{gcode}|{time}">
+        </div>
+
+        <label class="control-label">
+            {{ _('SlicingCancelled') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_slicingcancelled_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_slicingcancelled_format" placeholder="SlicingCancelled|{stl}|{gcode}">
+        </div>
+
+        <label class="control-label">
+            {{ _('SlicingFailed') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_slicingfailed_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_slicingfailed_format" placeholder="SlicingFailed|{stl}|{gcode}|{reason}">
+        </div>
+
+
+	<br>
+	<h5>Settings</h5>
+
+        <label class="control-label">
+            {{ _('SettingsUpdated') }}
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.particle_publisher.events_settingsupdated_enabled">
+        </label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.particle_publisher.events_settingsupdated_format" placeholder="SettingsUpdated|">
+        </div>
+
     </div>
 </form>
