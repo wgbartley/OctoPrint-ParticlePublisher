@@ -13,15 +13,17 @@ from octoprint.events import Events
 
 
 class ParticlePublisherCallback(octoprint.printer.PrinterCallback):
-	def __init__(self, access_token, pubsub_event, api_url, temperature_format):
+	def __init__(self, access_token, pubsub_event, api_url, temperature_format, temperature_enabled):
 		self._access_token = access_token
 		self._pubsub_event = pubsub_event
 		self._api_url = api_url
 		self._temperature_format = temperature_format
+		self._temperature_enabled = temperature_enabled
 
 	##-- Printer temperature
 	def on_printer_add_temperature(self, data):
-		self._publish(self._temperature_format.format(**data))
+		if self._temperature_enabled:
+			self._publish(self._temperature_format.format(**data))
 
 	def _publish(self, data):
 		data = data.replace(": ", ":")
@@ -72,11 +74,13 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 		self._pubsub_event = self._settings.get(["pubsub_event"])
 		self._api_url = self._settings.get(["api_url"])
 		self._temperature_format = self._settings.get(["temperature_format"])
+		self._temperature_enabled = self._settings.get(["temperature_enabled"])
 		self._progress_format = self._settings.get(["progress_format"])
+		self._progress_enabled = self._settings.get(["progress_enabled"])
 		self._connect_publisher()
 
 		if self._ok:
-			self._callback = ParticlePublisherCallback(self._access_token, self._pubsub_event, self._api_url, self._temperature_format)
+			self._callback = ParticlePublisherCallback(self._access_token, self._pubsub_event, self._api_url, self._temperature_format, self._temperature_enabled)
 			self._printer.register_callback(self._callback)
 
 
@@ -93,144 +97,146 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 			pubsub_event = "3dprinter",
 			api_url = "https://api.particle.io/v1",
 			temperature_format = "Temperature|{tool0[actual]}|{tool0[target]}|{bed[actual]}|{bed[target]}",
+			temperature_enabled = True,
 			progress_format = "Progress|{storage}|{path}|{progress}",
+			progress_enabled = True,
 
-			events_startup_enabled = "",
+			events_startup_enabled = False,
 			events_startup_format = "StartUp",
 
-			events_connected_enabled = "",
+			events_connected_enabled = False,
 			events_connected_format = "Connected|{port}|{baudrate}",
 
-			events_disconnected_enabled = "",
+			events_disconnected_enabled = False,
 			events_disconnected_format = "Disconnected",
 
-			events_clientopened_enabled = "",
+			events_clientopened_enabled = False,
 			events_clientopened_format = "ClientOpened|{remoteAddress}",
 
-			events_clientclosed_enabled = "",
+			events_clientclosed_enabled = False,
 			events_clientclosed_format = "ClientClosed|{remoteAddress}",
 
-			events_upload_enabled = "",
+			events_upload_enabled = False,
 			events_upload_format = "Upload|{file}|{target}",
 
-			events_fileselected_enabled = "",
+			events_fileselected_enabled = False,
 			events_fileselected_format = "FileSelected|{file}|{filename}|{origin}",
 
-			events_filedeselected_enabled = "",
+			events_filedeselected_enabled = False,
 			events_filedeselected_format = "FileDeselected",
 
-			events_updatedfiles_enabled = "",
+			events_updatedfiles_enabled = False,
 			events_updatedilfes_format = "UpdatedFiles|{type}",
 
-			events_metadataanalysisstarted_enabled = "",
+			events_metadataanalysisstarted_enabled = False,
 			events_metadataanalysisstarted_format = "MetadataAnalysisStarted|{file}",
 
-			events_metadataanalysisfinished_enabled = "",
+			events_metadataanalysisfinished_enabled = False,
 			events_metadataanalysisfinished_format = "MetadataAnalysisFinished|{file}",
 
-			events_metadatastatisticsupdated_enabled = "",
+			events_metadatastatisticsupdated_enabled = False,
 			events_metadatastatisticsupdated_format = "MetadataStatisticsUpdated",
 
-			events_transferstarted_enabled = "",
+			events_transferstarted_enabled = False,
 			events_transferstarted_format = "TransferStarted|{local}|{remote}",
 
-			events_transferdone_enabled = "",
+			events_transferdone_enabled = False,
 			events_transferdone_format = "TransferDone|{time}|{local}|{remote}",
 
-			events_printstarted_enabled = "",
+			events_printstarted_enabled = False,
 			events_printstarted_format = "PrintStarted|{file}|{origin}",
 
-			events_printdone_enabled = "",
+			events_printdone_enabled = False,
 			events_printdone_format = "PrintDone|{file}|{origin}|{time}",
 
-			events_printfailed_enabled = "",
+			events_printfailed_enabled = False,
 			events_printfailed_format = "PrintFailed|{file}|{origin}",
 
-			events_printcancelled_enabled = "",
+			events_printcancelled_enabled = False,
 			events_printcancelled_format = "PrintCancelled|{file}|{origin}",
 
-			events_printpaused_enabled = "",
+			events_printpaused_enabled = False,
 			events_printpaused_format = "PrintPaused|{file}|{origin}",
 
-			events_printresumed_enabled = "",
+			events_printresumed_enabled = False,
 			events_printresumed_format = "PrintResumed|{file}|{origin}",
 
-			events_error_enabled = "",
+			events_error_enabled = False,
 			events_error_format = "Error|{error}",
 
-			events_poweron_enabled = "",
+			events_poweron_enabled = False,
 			events_poweron_format = "PowerOn",
 
-			events_poweroff_enabled = "",
+			events_poweroff_enabled = False,
 			events_poweroff_format = "PowerOff",
 
-			events_home_enabled = "",
+			events_home_enabled = False,
 			events_home_format = "Home",
 
-			events_zchange_enabled = "",
+			events_zchange_enabled = False,
 			events_zchange_format = "ZChange|{new}|{old}",
 
-			events_waiting_enabled = "",
+			events_waiting_enabled = False,
 			events_waiting_format = "Waiting",
 
-			events_dwell_enabled = "",
+			events_dwell_enabled = False,
 			events_dwell_format = "Dwell",
 
-			events_cooling_enabled = "",
+			events_cooling_enabled = False,
 			events_cooling_format = "Cooling",
 
-			events_alert_enabled = "",
+			events_alert_enabled = False,
 			events_alert_format = "Alert",
 
-			events_conveyor_enabled = "",
+			events_conveyor_enabled = False,
 			events_conveyor_format = "Conveyor",
 
-			events_eject_enabled = "",
+			events_eject_enabled = False,
 			events_eject_format = "Eject",
 
-			events_estop_enabled = "",
+			events_estop_enabled = False,
 			events_estop_format = "EStop",
 
-			events_registeredmessagereceived_enabled = "",
+			events_registeredmessagereceived_enabled = False,
 			events_registeredmessagereceived_format = "RegisteredMessageReceived",
 
-			events_capturestart_enabled = "",
+			events_capturestart_enabled = False,
 			events_capturestart_format = "CaptureStart|{file}",
 
-			events_capturedone_enabled = "",
+			events_capturedone_enabled = False,
 			events_capturedone_format = "CaptureDone|{file}",
 
-			events_capturefailed_enabled = "",
+			events_capturefailed_enabled = False,
 			events_capturefailed_format = "CaptureFailed",
 
-			events_postrollstart_enabled = "",
+			events_postrollstart_enabled = False,
 			events_postrollstart_format = "PostRollStart",
 
-			events_postrollend_enabled = "",
+			events_postrollend_enabled = False,
 			events_postrollend_format = "PostRollEnd",
 
-			events_movierendering_enabled = "",
+			events_movierendering_enabled = False,
 			events_movierendering_format = "MovieRendering|{gcode}|{movie}|{movie_basename}",
 
-			events_moviedone_enabled = "",
+			events_moviedone_enabled = False,
 			events_moviedone_format = "MovieDone|{gcode}|{movie}|{movie_basename}",
 
-			events_moviefailed_enabled = "",
+			events_moviefailed_enabled = False,
 			events_moviefailed_format = "MovieFailed|{gcode}|{movie}|{movie_basename}|{returncode}",
 
-			events_slicingstarted_enabled = "",
+			events_slicingstarted_enabled = False,
 			events_slicingstarted_format = "SlicingStarted|{stl}|{gcode}|{progressAvailable}",
 
-			events_slicingdone_enabled = "",
+			events_slicingdone_enabled = False,
 			events_slicingdone_format = "SlicingDone|{stl}|{gcode}|{time}",
 
-			events_slicingfailed_enabled = "",
+			events_slicingfailed_enabled = False,
 			events_slicingfailed_format = "SlicingFailed|{stl}|{gcode}|{reason}",
 
-			events_slicingcancelled_enabled = "",
+			events_slicingcancelled_enabled = False,
 			events_slicingcancelled_format = "SlicingCancelled|{stl}|{gcode}",
 
-			events_settingsupdated_enabled = "",
+			events_settingsupdated_enabled = False,
 			events_settingsupdated_format = "SettingsUpdated"
 		)
 
@@ -261,7 +267,8 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 			progress = progress
 		)
 
-		self._publish(self._progress_format.format(**data))
+		if self._progress_enabled:
+			self._publish(self._progress_format.format(**data))
 
 
 	##~~ Softwareupdate hook
