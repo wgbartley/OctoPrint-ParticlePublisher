@@ -12,7 +12,7 @@ import octoprint.plugin
 from octoprint.events import Events
 
 
-class ParticlePublisherCallback(octoprint.printer.PrinterCallback):
+class ParticlePublisherCallback(octoprint.plugin.SettingsPlugin, octoprint.printer.PrinterCallback):
 	def __init__(self, access_token, pubsub_event, api_url, temperature_format, temperature_enabled):
 		self._access_token = access_token
 		self._pubsub_event = pubsub_event
@@ -46,16 +46,14 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 
 	def __init__(self):
 		self._ok = False
-		self._access_token = None
-		self._pubsub_event = "3dprinter"
-		self._api_url = "https://api.particle.io/v1"
-		self._temperature_format = "Temperature|{tool0[actual]}|{tool0[target]}|{bed[actual]}|{bed[target]}"
-		self._progress_format = "Progress|{storage}|{path}|{progress}"
 
 
 	def _connect_publisher(self):
 		try:
-			r = requests.get(self._api_url+"/devices", headers={'Authorization': 'Bearer '+self._access_token})
+			api_url = self._settings.get(["api_url"])
+			access_token = self._settings.get(["access_token"])
+
+			r = requests.get(api_url+"/devices", headers={'Authorization': 'Bearer '+access_token})
 			self._logger.info("Connected to Particle: "+str(r.status_code))
 			if r.ok:
 				self._ok = r.ok
@@ -69,25 +67,26 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 	#~~ StartupPlugin
 	def on_after_startup(self):
 		self._logger.info("Particle Publisher plugin loaded")
-
-		self._access_token = self._settings.get(["access_token"])
-		self._pubsub_event = self._settings.get(["pubsub_event"])
-		self._api_url = self._settings.get(["api_url"])
-		self._temperature_format = self._settings.get(["temperature_format"])
-		self._temperature_enabled = self._settings.get(["temperature_enabled"])
-		self._progress_format = self._settings.get(["progress_format"])
-		self._progress_enabled = self._settings.get(["progress_enabled"])
 		self._connect_publisher()
 
 		if self._ok:
-			self._callback = ParticlePublisherCallback(self._access_token, self._pubsub_event, self._api_url, self._temperature_format, self._temperature_enabled)
+			access_token = self._settings.get(["access_token"])
+			pubsub_event = self._settings.get(["pubsub_event"])
+			api_url = self._settings.get(["api_url"])
+			temperature_format = self._settings.get(["temperature_format"])
+			temperature_enabled = self._settings.get(["temperature_enabled"])
+
+			self._callback = ParticlePublisherCallback(access_token, pubsub_event, api_url, temperature_format, temperature_enabled)
 			self._printer.register_callback(self._callback)
 
 
 	#~~ SettingsPlugin
 	def on_settings_save(self, data):
 		octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
-		self._printer.unregister_callback(self._callback)
+
+		if hasattr(self, '_callback'):
+			self._printer.unregister_callback(self._callback)
+
 		self.on_after_startup()
 
 
@@ -96,8 +95,10 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 			access_token = None,
 			pubsub_event = "3dprinter",
 			api_url = "https://api.particle.io/v1",
+
 			temperature_format = "Temperature|{tool0[actual]}|{tool0[target]}|{bed[actual]}|{bed[target]}",
 			temperature_enabled = True,
+
 			progress_format = "Progress|{storage}|{path}|{progress}",
 			progress_enabled = True,
 
@@ -294,10 +295,14 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 		data = data.replace(": ", ":")
 		data = data.replace(", ", ",")
 
-		headers = {'Authorization': 'Bearer '+self._access_token}
-		payload = {'name':self._pubsub_event, 'data':data, 'private':'true'}
+		api_url = self._settings.get(["api_url"])
+		access_token = self._settings.get(["access_token"])
+		pubsub_event = self._settings.get(["pubsub_event"])
 
-		r = requests.post(self._api_url+"/devices/events", data=payload, headers=headers)
+		headers = {'Authorization': 'Bearer '+access_token}
+		payload = {'name': pubsub_event, 'data':data, 'private':'true'}
+
+		r = requests.post(api_url+"/devices/events", data=payload, headers=headers)
 
 
 
