@@ -13,15 +13,18 @@ from octoprint.events import Events
 
 
 class ParticlePublisherCallback(octoprint.plugin.SettingsPlugin, octoprint.printer.PrinterCallback):
-	def __init__(self, access_token, pubsub_event, api_url, temperature_format, temperature_enabled):
+	def __init__(self, access_token, pubsub_event, api_url, temperature_format, temperature_enabled, printer):
 		self._access_token = access_token
 		self._pubsub_event = pubsub_event
 		self._api_url = api_url
 		self._temperature_format = temperature_format
 		self._temperature_enabled = temperature_enabled
+		self._printer = printer
 
 	##-- Printer temperature
 	def on_printer_add_temperature(self, data):
+		data.update({'current_data': self._printer.get_current_data()})
+
 		if self._temperature_enabled:
 			self._publish(self._temperature_format.format(**data))
 
@@ -76,7 +79,7 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 			temperature_format = self._settings.get(["temperature_format"])
 			temperature_enabled = self._settings.get(["temperature_enabled"])
 
-			self._callback = ParticlePublisherCallback(access_token, pubsub_event, api_url, temperature_format, temperature_enabled)
+			self._callback = ParticlePublisherCallback(access_token, pubsub_event, api_url, temperature_format, temperature_enabled, self._printer)
 			self._printer.register_callback(self._callback)
 
 
@@ -251,25 +254,31 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 
 	#~~ EventHandlerPlugin
 	def on_event(self, event, payload):
-		this_event_enabled = str(self._settings.get(["events_"+event.lower()+"_enabled"]))
+		if payload is None:
+			payload = dict()
+
+		payload.update({'current_data': self._printer.get_current_data()})
+
+		this_event_enabled = self._settings.get(["events_"+event.lower()+"_enabled"])
 		this_event_format = str(self._settings.get(["events_"+event.lower()+"_format"]))
 
 		if self._ok and this_event_enabled:
 			if payload is not None:
 				self._publish(this_event_format.format(**payload))
 			else:
-				self._publish(this_event_format)
+				self._publish(this_event_format.format(**current_data))
 
 
 	def on_print_progress(self, storage, path, progress):
 		data = dict(
 			storage = storage,
 			path = path,
-			progress = progress
+			progress = progress,
+			current_data = self._printer.get_current_data()
 		)
 
-		if self._progress_enabled:
-			self._publish(self._progress_format.format(**data))
+		if self._settings.get(["progress_enabled"]):
+			self._publish(self._settings.get(["progress_format"]).format(**data))
 
 
 	##~~ Softwareupdate hook
