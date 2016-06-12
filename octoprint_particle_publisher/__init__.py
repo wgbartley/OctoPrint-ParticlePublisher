@@ -130,7 +130,7 @@ class ParticlePublisherPlugin(octoprint.plugin.EventHandlerPlugin,
 			events_filedeselected_format = "FileDeselected",
 
 			events_updatedfiles_enabled = False,
-			events_updatedilfes_format = "UpdatedFiles|{type}",
+			events_updatedfiles_format = "UpdatedFiles|{type}",
 
 			events_metadataanalysisstarted_enabled = False,
 			events_metadataanalysisstarted_format = "MetadataAnalysisStarted|{file}",
