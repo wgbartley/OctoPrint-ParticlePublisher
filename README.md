@@ -2,7 +2,7 @@
 
 This is an OctoPrint Plugin that adds support for Particle PubSub publishing to OctoPrint.
 
-OctoPrint will send messages on temperature updates as well (but not all) as many OctoPrint events.
+OctoPrint will send messages on temperature updates, print progress updates, as well as many OctoPrint events.
 
 ## Installation
 
@@ -30,3 +30,20 @@ plugins:
     api_url: https://api.particle.io/v1
 ```
 
+
+## Usage
+
+Once configured, you will be able to publish many events to your Particle devices.  You can choose which events
+to publish and configure the data sent in each message.  Some defaults have been provided, but you may change
+them however you wish.  Just keep in mind that you'll need to be able to parse the messages on your devices, so
+a delimited format may be easiest.  The variable replacement is handled by the [Python string format method](https://docs.python.org/2/library/string.html#string.Formatter.format).
+
+A listing of the data available for each event is in the [OctoPrint Available Events documentation](http://docs.octoprint.org/en/master/events/index.html#available-events).
+For convenience, the [current printer state data](http://docs.octoprint.org/en/master/api/printer.html#retrieve-the-current-printer-state)
+is provided for each event in the `current_data` key.  An example of using `current_data`:
+> `Progress|{progress}|{path}|{current_data[state][text]}`
+
+
+## Disclaimer
+
+This is my first ever real Python project, so there may be bugs or more efficient ways of doing things.  Issues and pull requests are welcomed!
